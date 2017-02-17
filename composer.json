@@ -17,9 +17,17 @@
         "doctrine/orm": "^2.5",
         "doctrine/doctrine-bundle": "^1.6"
     },
+    "require-dev": {
+        "phpunit/phpunit": "4.8.*"
+    },
     "autoload": {
         "psr-4": {
             "Antalaron\\DoctrineTwigBundle\\": "src/Antalaron/DoctrineTwigBundle/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Antalaron\\DoctrineTwigBundle\\Tests\\": "tests/"
         }
     },
     "minimum-stability": "dev",
