@@ -1,0 +1,31 @@
+{
+    "name": "antalaron/doctrine-twig-bundle",
+    "type": "symfony-bundle",
+    "description": "Twig Doctrine Bundle",
+    "keywords": ["twig", "doctrine"],
+    "homepage": "http://antalaron.hu",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Antal Áron",
+            "email": "antalaron@antalaron.hu"
+        }
+    ],
+    "require": {
+        "php": ">=5.5.9",
+        "symfony/symfony": "~2.7|~3.0",
+        "doctrine/orm": "^2.5",
+        "doctrine/doctrine-bundle": "^1.6"
+    },
+    "autoload": {
+        "psr-4": {
+            "Antalaron\\DoctrineTwigBundle\\": "src/Pph/DoctrineTwigBundle/"
+        }
+    },
+    "minimum-stability": "dev",
+    "extra": {
+        "branch-alias": {
+            "dev-master": "0.1-dev"
+        }
+    }
+}
