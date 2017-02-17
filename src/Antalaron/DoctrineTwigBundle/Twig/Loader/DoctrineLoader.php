@@ -45,8 +45,6 @@ class DoctrineLoader implements \Twig_LoaderInterface, \Twig_SourceContextLoader
         if (null !== $template) {
             return $template->getSource();
         }
-
-        return null;
     }
 
     /**

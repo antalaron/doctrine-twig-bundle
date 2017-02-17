@@ -19,7 +19,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Antalaron\\DoctrineTwigBundle\\": "src/Pph/DoctrineTwigBundle/"
+            "Antalaron\\DoctrineTwigBundle\\": "src/Antalaron/DoctrineTwigBundle/"
         }
     },
     "minimum-stability": "dev",
