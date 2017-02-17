@@ -147,7 +147,7 @@ class Template implements TemplateInterface
      *
      * @return Template
      */
-    public function isEnabled($enabled)
+    public function setEnabled($enabled)
     {
         $this->enabled = (bool) $enabled;
 
@@ -159,7 +159,7 @@ class Template implements TemplateInterface
      *
      * @return bool
      */
-    public function getEnabled()
+    public function isEnabled()
     {
         return $this->enabled;
     }

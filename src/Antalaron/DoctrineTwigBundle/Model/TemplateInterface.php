@@ -78,12 +78,12 @@ interface TemplateInterface
      *
      * @return TemplateInterface
      */
-    public function isEnabled($enabled);
+    public function setEnabled($enabled);
 
     /**
      * Get enabled.
      *
      * @return bool
      */
-    public function getEnabled();
+    public function isEnabled();
 }
