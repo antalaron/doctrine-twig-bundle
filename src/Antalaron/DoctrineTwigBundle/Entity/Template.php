@@ -16,6 +16,7 @@ use Doctrine\ORM\Mapping as ORM;
  * Template.
  *
  * @ORM\Entity(repositoryClass="Antalaron\DoctrineTwigBundle\Repository\TemplateRepository")
+ * @ORM\HasLifecycleCallbacks()
  *
  * @author Antal Áron <antalaron@antalaron.hu>
  */
@@ -138,6 +139,19 @@ class Template implements TemplateInterface
     public function getModifiedAt()
     {
         return $this->modifiedAt;
+    }
+
+    /**
+     * OnModify.
+     *
+     * @ORM\PrePersist
+     * @ORM\PreUpdate
+     *
+     * @return Template
+     */
+    public function onModify()
+    {
+        return $this->setModifiedAt(new \DateTime());
     }
 
     /**
