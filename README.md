@@ -1,8 +1,13 @@
 DoctrineTwigBundle
 ==================
 
+[![Build Status](https://travis-ci.org/antalaron/doctrine-twig-bundle.svg?branch=master)](https://travis-ci.org/antalaron/doctrine-twig-bundle)
+[![Latest Stable Version](https://poser.pugx.org/antalaron/doctrine-twig-bundle/v/stable)](https://packagist.org/packages/antalaron/doctrine-twig-bundle)
+[![Latest Unstable Version](https://poser.pugx.org/antalaron/doctrine-twig-bundle/v/unstable)](https://packagist.org/packages/antalaron/doctrine-twig-bundle)
+
 [Doctrine](http://www.doctrine-project.org/) [Twig](http://twig.sensiolabs.org/)
-loader bundle for [Symfony](https://symfony.com/).
+loader bundle for [Symfony](https://symfony.com/). This bundle allows you to store
+templates in database.
 
 Installation
 ------------
@@ -45,8 +50,3 @@ class AppKernel extends Kernel
     // ...
 }
 ```
-
-License
--------
-
-MIT.
