@@ -1,0 +1,2 @@
+parameters:
+    antalaron_doctrine_twig.target_entity_resolver.template.class: 'Antalaron\DoctrineTwigBundle\Entity\Template'

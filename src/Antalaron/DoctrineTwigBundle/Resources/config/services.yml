@@ -1,1 +1,6 @@
 services:
+    antalaron_doctrine_twig.twig_loader.doctrine:
+        class: 'Antalaron\DoctrineTwigBundle\Twig\Loader\DoctrineLoader'
+        arguments: ['@doctrine.orm.entity_manager']
+        tags:
+            - { name: twig.loader, priority: 10 }
