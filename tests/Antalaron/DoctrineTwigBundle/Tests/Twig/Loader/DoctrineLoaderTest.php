@@ -17,31 +17,39 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 
 class DoctrineLoaderTest extends \PHPUnit_Framework_TestCase
 {
+    protected $repository;
+    protected $registry;
+
+    protected function buildRegistry($name, $template = null)
+    {
+        $this->repository = $this->getMockBuilder(TemplateRepository::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['findOneBy'])
+            ->getMock();
+        $this->repository
+            ->expects($this->once())
+            ->method('findOneBy')
+            ->with(['name' => $name])
+            ->will($this->returnValue($template));
+
+        $this->registry = $this->getMockBuilder(ManagerRegistry::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->registry
+            ->expects($this->once())
+            ->method('getRepository')
+            ->with(TemplateInterface::class)
+            ->will($this->returnValue($this->repository));
+    }
+
     public function testExists()
     {
         $template = new Template();
         $template->setEnabled(true);
         $name = 'foo_bar';
 
-        $repository = $this->getMockBuilder(TemplateRepository::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['findOneBy'])
-            ->getMock();
-        $repository
-            ->expects($this->once())
-            ->method('findOneBy')
-            ->with(['name' => $name])
-            ->will($this->returnValue($template));
-
-        $registry = $this->getMockBuilder(ManagerRegistry::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $registry
-            ->expects($this->once())
-            ->method('getRepository')
-            ->with(TemplateInterface::class)
-            ->will($this->returnValue($repository));
-        $loader = new DoctrineLoader($registry);
+        $this->buildRegistry($name, $template);
+        $loader = new DoctrineLoader($this->registry);
 
         $this->assertTrue($loader->exists($name));
     }
@@ -52,25 +60,8 @@ class DoctrineLoaderTest extends \PHPUnit_Framework_TestCase
         $template->setEnabled(false);
         $name = 'foo_bar';
 
-        $repository = $this->getMockBuilder(TemplateRepository::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['findOneBy'])
-            ->getMock();
-        $repository
-            ->expects($this->once())
-            ->method('findOneBy')
-            ->with(['name' => $name])
-            ->will($this->returnValue($template));
-
-        $registry = $this->getMockBuilder(ManagerRegistry::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $registry
-            ->expects($this->once())
-            ->method('getRepository')
-            ->with(TemplateInterface::class)
-            ->will($this->returnValue($repository));
-        $loader = new DoctrineLoader($registry);
+        $this->buildRegistry($name, $template);
+        $loader = new DoctrineLoader($this->registry);
 
         $this->assertFalse($loader->exists($name));
     }
@@ -79,25 +70,8 @@ class DoctrineLoaderTest extends \PHPUnit_Framework_TestCase
     {
         $name = 'foo_bar';
 
-        $repository = $this->getMockBuilder(TemplateRepository::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['findOneBy'])
-            ->getMock();
-        $repository
-            ->expects($this->once())
-            ->method('findOneBy')
-            ->with(['name' => $name])
-            ->will($this->returnValue(null));
-
-        $registry = $this->getMockBuilder(ManagerRegistry::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $registry
-            ->expects($this->once())
-            ->method('getRepository')
-            ->with(TemplateInterface::class)
-            ->will($this->returnValue($repository));
-        $loader = new DoctrineLoader($registry);
+        $this->buildRegistry($name);
+        $loader = new DoctrineLoader($this->registry);
 
         $this->assertFalse($loader->exists($name));
     }
@@ -110,25 +84,8 @@ class DoctrineLoaderTest extends \PHPUnit_Framework_TestCase
         $source = 'foo_bar_baz';
         $template->setSource($source);
 
-        $repository = $this->getMockBuilder(TemplateRepository::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['findOneBy'])
-            ->getMock();
-        $repository
-            ->expects($this->once())
-            ->method('findOneBy')
-            ->with(['name' => $name])
-            ->will($this->returnValue($template));
-
-        $registry = $this->getMockBuilder(ManagerRegistry::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $registry
-            ->expects($this->once())
-            ->method('getRepository')
-            ->with(TemplateInterface::class)
-            ->will($this->returnValue($repository));
-        $loader = new DoctrineLoader($registry);
+        $this->buildRegistry($name, $template);
+        $loader = new DoctrineLoader($this->registry);
 
         $this->assertEquals($source, $loader->getSourceContext($name)->getCode());
     }
@@ -141,25 +98,8 @@ class DoctrineLoaderTest extends \PHPUnit_Framework_TestCase
     {
         $name = 'foo_bar';
 
-        $repository = $this->getMockBuilder(TemplateRepository::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['findOneBy'])
-            ->getMock();
-        $repository
-            ->expects($this->once())
-            ->method('findOneBy')
-            ->with(['name' => $name])
-            ->will($this->returnValue(null));
-
-        $registry = $this->getMockBuilder(ManagerRegistry::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $registry
-            ->expects($this->once())
-            ->method('getRepository')
-            ->with(TemplateInterface::class)
-            ->will($this->returnValue($repository));
-        $loader = new DoctrineLoader($registry);
+        $this->buildRegistry($name);
+        $loader = new DoctrineLoader($this->registry);
 
         $loader->getSourceContext($name);
     }
@@ -176,25 +116,8 @@ class DoctrineLoaderTest extends \PHPUnit_Framework_TestCase
         $source = 'foo_bar_baz';
         $template->setSource($source);
 
-        $repository = $this->getMockBuilder(TemplateRepository::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['findOneBy'])
-            ->getMock();
-        $repository
-            ->expects($this->once())
-            ->method('findOneBy')
-            ->with(['name' => $name])
-            ->will($this->returnValue($template));
-
-        $registry = $this->getMockBuilder(ManagerRegistry::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $registry
-            ->expects($this->once())
-            ->method('getRepository')
-            ->with(TemplateInterface::class)
-            ->will($this->returnValue($repository));
-        $loader = new DoctrineLoader($registry);
+        $this->buildRegistry($name, $template);
+        $loader = new DoctrineLoader($this->registry);
 
         $loader->getSourceContext($name);
     }
@@ -205,25 +128,8 @@ class DoctrineLoaderTest extends \PHPUnit_Framework_TestCase
         $template->setEnabled(true);
         $name = 'foo_bar';
 
-        $repository = $this->getMockBuilder(TemplateRepository::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['findOneBy'])
-            ->getMock();
-        $repository
-            ->expects($this->once())
-            ->method('findOneBy')
-            ->with(['name' => $name])
-            ->will($this->returnValue($template));
-
-        $registry = $this->getMockBuilder(ManagerRegistry::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $registry
-            ->expects($this->once())
-            ->method('getRepository')
-            ->with(TemplateInterface::class)
-            ->will($this->returnValue($repository));
-        $loader = new DoctrineLoader($registry);
+        $this->buildRegistry($name, $template);
+        $loader = new DoctrineLoader($this->registry);
 
         $this->assertEquals(DoctrineLoader::CACHE_KEY_PREFIX.$name, $loader->getCacheKey($name));
     }
@@ -236,25 +142,8 @@ class DoctrineLoaderTest extends \PHPUnit_Framework_TestCase
     {
         $name = 'foo_bar';
 
-        $repository = $this->getMockBuilder(TemplateRepository::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['findOneBy'])
-            ->getMock();
-        $repository
-            ->expects($this->once())
-            ->method('findOneBy')
-            ->with(['name' => $name])
-            ->will($this->returnValue(null));
-
-        $registry = $this->getMockBuilder(ManagerRegistry::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $registry
-            ->expects($this->once())
-            ->method('getRepository')
-            ->with(TemplateInterface::class)
-            ->will($this->returnValue($repository));
-        $loader = new DoctrineLoader($registry);
+        $this->buildRegistry($name);
+        $loader = new DoctrineLoader($this->registry);
 
         $loader->getCacheKey($name);
     }
@@ -269,25 +158,8 @@ class DoctrineLoaderTest extends \PHPUnit_Framework_TestCase
         $template->setEnabled(false);
         $name = 'foo_bar';
 
-        $repository = $this->getMockBuilder(TemplateRepository::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['findOneBy'])
-            ->getMock();
-        $repository
-            ->expects($this->once())
-            ->method('findOneBy')
-            ->with(['name' => $name])
-            ->will($this->returnValue($template));
-
-        $registry = $this->getMockBuilder(ManagerRegistry::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $registry
-            ->expects($this->once())
-            ->method('getRepository')
-            ->with(TemplateInterface::class)
-            ->will($this->returnValue($repository));
-        $loader = new DoctrineLoader($registry);
+        $this->buildRegistry($name, $template);
+        $loader = new DoctrineLoader($this->registry);
 
         $loader->getCacheKey($name);
     }
@@ -299,25 +171,8 @@ class DoctrineLoaderTest extends \PHPUnit_Framework_TestCase
         $template->onModify();
         $name = 'foo_bar';
 
-        $repository = $this->getMockBuilder(TemplateRepository::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['findOneBy'])
-            ->getMock();
-        $repository
-            ->expects($this->once())
-            ->method('findOneBy')
-            ->with(['name' => $name])
-            ->will($this->returnValue($template));
-
-        $registry = $this->getMockBuilder(ManagerRegistry::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $registry
-            ->expects($this->once())
-            ->method('getRepository')
-            ->with(TemplateInterface::class)
-            ->will($this->returnValue($repository));
-        $loader = new DoctrineLoader($registry);
+        $this->buildRegistry($name, $template);
+        $loader = new DoctrineLoader($this->registry);
 
         $this->assertTrue($loader->isFresh($name, time()));
     }
@@ -329,25 +184,8 @@ class DoctrineLoaderTest extends \PHPUnit_Framework_TestCase
         $template->onModify();
         $name = 'foo_bar';
 
-        $repository = $this->getMockBuilder(TemplateRepository::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['findOneBy'])
-            ->getMock();
-        $repository
-            ->expects($this->once())
-            ->method('findOneBy')
-            ->with(['name' => $name])
-            ->will($this->returnValue($template));
-
-        $registry = $this->getMockBuilder(ManagerRegistry::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $registry
-            ->expects($this->once())
-            ->method('getRepository')
-            ->with(TemplateInterface::class)
-            ->will($this->returnValue($repository));
-        $loader = new DoctrineLoader($registry);
+        $this->buildRegistry($name, $template);
+        $loader = new DoctrineLoader($this->registry);
 
         $this->assertFalse($loader->isFresh($name, time() - 10));
     }
@@ -360,25 +198,8 @@ class DoctrineLoaderTest extends \PHPUnit_Framework_TestCase
     {
         $name = 'foo_bar';
 
-        $repository = $this->getMockBuilder(TemplateRepository::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['findOneBy'])
-            ->getMock();
-        $repository
-            ->expects($this->once())
-            ->method('findOneBy')
-            ->with(['name' => $name])
-            ->will($this->returnValue(null));
-
-        $registry = $this->getMockBuilder(ManagerRegistry::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $registry
-            ->expects($this->once())
-            ->method('getRepository')
-            ->with(TemplateInterface::class)
-            ->will($this->returnValue($repository));
-        $loader = new DoctrineLoader($registry);
+        $this->buildRegistry($name);
+        $loader = new DoctrineLoader($this->registry);
 
         $loader->isFresh($name, time());
     }
@@ -394,25 +215,8 @@ class DoctrineLoaderTest extends \PHPUnit_Framework_TestCase
         $template->onModify();
         $name = 'foo_bar';
 
-        $repository = $this->getMockBuilder(TemplateRepository::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['findOneBy'])
-            ->getMock();
-        $repository
-            ->expects($this->once())
-            ->method('findOneBy')
-            ->with(['name' => $name])
-            ->will($this->returnValue($template));
-
-        $registry = $this->getMockBuilder(ManagerRegistry::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $registry
-            ->expects($this->once())
-            ->method('getRepository')
-            ->with(TemplateInterface::class)
-            ->will($this->returnValue($repository));
-        $loader = new DoctrineLoader($registry);
+        $this->buildRegistry($name, $template);
+        $loader = new DoctrineLoader($this->registry);
 
         $loader->isFresh($name, time());
     }

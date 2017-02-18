@@ -12,7 +12,7 @@ Symfony\CS\Fixer\Contrib\HeaderCommentFixer::setHeader($header);
 return Symfony\CS\Config\Config::create()
     ->setUsingLinter(false)
     ->level(Symfony\CS\FixerInterface::SYMFONY_LEVEL)
-    ->fixers(array(
+    ->fixers([
         'header_comment',
         'multiline_spaces_before_semicolon',
         'newline_after_open_tag',
@@ -20,7 +20,7 @@ return Symfony\CS\Config\Config::create()
         'short_array_syntax',
         'strict',
         'strict_param',
-    ))
+    ])
     ->finder(
         Symfony\CS\Finder\DefaultFinder::create()
             ->in(__DIR__)
