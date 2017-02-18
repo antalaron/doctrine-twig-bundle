@@ -3,12 +3,13 @@
     "type": "symfony-bundle",
     "description": "Twig Doctrine Bundle",
     "keywords": ["twig", "doctrine"],
-    "homepage": "http://antalaron.hu",
+    "homepage": "https://github.com/antalaron/doctrine-twig-bundle",
     "license": "MIT",
     "authors": [
         {
             "name": "Antal Áron",
-            "email": "antalaron@antalaron.hu"
+            "email": "antalaron@antalaron.hu",
+            "homepage": "http://antalaron.hu"
         }
     ],
     "require": {
@@ -18,7 +19,7 @@
         "doctrine/doctrine-bundle": "^1.6"
     },
     "require-dev": {
-        "phpunit/phpunit": "4.8.*"
+        "phpunit/phpunit": "*"
     },
     "autoload": {
         "psr-4": {
