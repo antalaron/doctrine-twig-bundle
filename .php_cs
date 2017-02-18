@@ -26,7 +26,6 @@ return Symfony\CS\Config\Config::create()
             ->in(__DIR__)
             ->exclude([
                 'vendor',
-                'tests',
                 'bin/.ci',
                 'bin/.travis',
                 'doc',

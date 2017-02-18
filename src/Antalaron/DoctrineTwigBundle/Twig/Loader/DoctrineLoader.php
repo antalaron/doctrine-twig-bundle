@@ -42,9 +42,15 @@ class DoctrineLoader implements \Twig_LoaderInterface, \Twig_SourceContextLoader
     {
         $template = $this->getRepository()->findOneByName($name);
 
-        if (null !== $template) {
-            return $template->getSource();
+        if (null === $template) {
+            throw new \Twig_Error_Loader(sprintf('Unable to find template "%s".', $name));
         }
+
+        if (!$template->isEnabled()) {
+            throw new \Twig_Error_Loader(sprintf('Template "%s" is not enabled.', $name));
+        }
+
+        return $template->getSource();
     }
 
     /**
@@ -54,6 +60,14 @@ class DoctrineLoader implements \Twig_LoaderInterface, \Twig_SourceContextLoader
     {
         $template = $this->getRepository()->findOneByName($name);
 
+        if (null === $template) {
+            throw new \Twig_Error_Loader(sprintf('Unable to find template "%s".', $name));
+        }
+
+        if (!$template->isEnabled()) {
+            throw new \Twig_Error_Loader(sprintf('Template "%s" is not enabled.', $name));
+        }
+
         return new \Twig_Source($template->getSource(), $name);
     }
 
@@ -62,6 +76,16 @@ class DoctrineLoader implements \Twig_LoaderInterface, \Twig_SourceContextLoader
      */
     public function getCacheKey($name)
     {
+        $template = $this->getRepository()->findOneByName($name);
+
+        if (null === $template) {
+            throw new \Twig_Error_Loader(sprintf('Unable to find template "%s".', $name));
+        }
+
+        if (!$template->isEnabled()) {
+            throw new \Twig_Error_Loader(sprintf('Template "%s" is not enabled.', $name));
+        }
+
         return static::CACHE_KEY_PREFIX.$name;
     }
 
@@ -72,11 +96,15 @@ class DoctrineLoader implements \Twig_LoaderInterface, \Twig_SourceContextLoader
     {
         $template = $this->getRepository()->findOneByName($name);
 
-        if (null !== $template) {
-            return $template->getModifiedAt()->getTimestamp() > $time;
+        if (null === $template) {
+            throw new \Twig_Error_Loader(sprintf('Unable to find template "%s".', $name));
         }
 
-        return false;
+        if (!$template->isEnabled()) {
+            throw new \Twig_Error_Loader(sprintf('Template "%s" is not enabled.', $name));
+        }
+
+        return $template->getModifiedAt()->getTimestamp() <= $time;
     }
 
     /**
