@@ -19,7 +19,9 @@ env:
 before_script:
     - composer require symfony/symfony:${SYMFONY_VERSION} --prefer-dist --no-interaction --no-progress
 
-script: vendor/bin/phpunit
+script:
+    - vendor/bin/phpunit
+    - if [ "${TRAVIS_PHP_VERSION}" != "hhvm" ] && [ "${TRAVIS_PHP_VERSION}" != "nightly" ] ; then vendor/bin/php-cs-fixer fix -v --diff --dry-run ; fi
 
 notifications:
     email:
