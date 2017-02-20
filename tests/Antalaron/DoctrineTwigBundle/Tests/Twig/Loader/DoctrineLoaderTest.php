@@ -17,39 +17,13 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 
 class DoctrineLoaderTest extends \PHPUnit_Framework_TestCase
 {
-    protected $repository;
-    protected $registry;
-
-    protected function buildRegistry($name, $template = null)
-    {
-        $this->repository = $this->getMockBuilder(TemplateRepository::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['findOneBy'])
-            ->getMock();
-        $this->repository
-            ->expects($this->once())
-            ->method('findOneBy')
-            ->with(['name' => $name])
-            ->will($this->returnValue($template));
-
-        $this->registry = $this->getMockBuilder(ManagerRegistry::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->registry
-            ->expects($this->once())
-            ->method('getRepository')
-            ->with(TemplateInterface::class)
-            ->will($this->returnValue($this->repository));
-    }
-
     public function testExists()
     {
         $template = new Template();
         $template->setEnabled(true);
         $name = 'foo_bar';
 
-        $this->buildRegistry($name, $template);
-        $loader = new DoctrineLoader($this->registry);
+        $loader = $this->createLoader($name, $template);
 
         $this->assertTrue($loader->exists($name));
     }
@@ -60,8 +34,7 @@ class DoctrineLoaderTest extends \PHPUnit_Framework_TestCase
         $template->setEnabled(false);
         $name = 'foo_bar';
 
-        $this->buildRegistry($name, $template);
-        $loader = new DoctrineLoader($this->registry);
+        $loader = $this->createLoader($name, $template);
 
         $this->assertFalse($loader->exists($name));
     }
@@ -70,8 +43,7 @@ class DoctrineLoaderTest extends \PHPUnit_Framework_TestCase
     {
         $name = 'foo_bar';
 
-        $this->buildRegistry($name);
-        $loader = new DoctrineLoader($this->registry);
+        $loader = $this->createLoader($name);
 
         $this->assertFalse($loader->exists($name));
     }
@@ -84,8 +56,7 @@ class DoctrineLoaderTest extends \PHPUnit_Framework_TestCase
         $source = 'foo_bar_baz';
         $template->setSource($source);
 
-        $this->buildRegistry($name, $template);
-        $loader = new DoctrineLoader($this->registry);
+        $loader = $this->createLoader($name, $template);
 
         $this->assertEquals($source, $loader->getSourceContext($name)->getCode());
     }
@@ -98,8 +69,7 @@ class DoctrineLoaderTest extends \PHPUnit_Framework_TestCase
     {
         $name = 'foo_bar';
 
-        $this->buildRegistry($name);
-        $loader = new DoctrineLoader($this->registry);
+        $loader = $this->createLoader($name);
 
         $loader->getSourceContext($name);
     }
@@ -116,8 +86,7 @@ class DoctrineLoaderTest extends \PHPUnit_Framework_TestCase
         $source = 'foo_bar_baz';
         $template->setSource($source);
 
-        $this->buildRegistry($name, $template);
-        $loader = new DoctrineLoader($this->registry);
+        $loader = $this->createLoader($name, $template);
 
         $loader->getSourceContext($name);
     }
@@ -128,8 +97,7 @@ class DoctrineLoaderTest extends \PHPUnit_Framework_TestCase
         $template->setEnabled(true);
         $name = 'foo_bar';
 
-        $this->buildRegistry($name, $template);
-        $loader = new DoctrineLoader($this->registry);
+        $loader = $this->createLoader($name, $template);
 
         $this->assertEquals(DoctrineLoader::CACHE_KEY_PREFIX.$name, $loader->getCacheKey($name));
     }
@@ -142,8 +110,7 @@ class DoctrineLoaderTest extends \PHPUnit_Framework_TestCase
     {
         $name = 'foo_bar';
 
-        $this->buildRegistry($name);
-        $loader = new DoctrineLoader($this->registry);
+        $loader = $this->createLoader($name);
 
         $loader->getCacheKey($name);
     }
@@ -158,8 +125,7 @@ class DoctrineLoaderTest extends \PHPUnit_Framework_TestCase
         $template->setEnabled(false);
         $name = 'foo_bar';
 
-        $this->buildRegistry($name, $template);
-        $loader = new DoctrineLoader($this->registry);
+        $loader = $this->createLoader($name, $template);
 
         $loader->getCacheKey($name);
     }
@@ -171,8 +137,7 @@ class DoctrineLoaderTest extends \PHPUnit_Framework_TestCase
         $template->onModify();
         $name = 'foo_bar';
 
-        $this->buildRegistry($name, $template);
-        $loader = new DoctrineLoader($this->registry);
+        $loader = $this->createLoader($name, $template);
 
         $this->assertTrue($loader->isFresh($name, time()));
     }
@@ -184,8 +149,7 @@ class DoctrineLoaderTest extends \PHPUnit_Framework_TestCase
         $template->onModify();
         $name = 'foo_bar';
 
-        $this->buildRegistry($name, $template);
-        $loader = new DoctrineLoader($this->registry);
+        $loader = $this->createLoader($name, $template);
 
         $this->assertFalse($loader->isFresh($name, time() - 10));
     }
@@ -198,8 +162,7 @@ class DoctrineLoaderTest extends \PHPUnit_Framework_TestCase
     {
         $name = 'foo_bar';
 
-        $this->buildRegistry($name);
-        $loader = new DoctrineLoader($this->registry);
+        $loader = $this->createLoader($name);
 
         $loader->isFresh($name, time());
     }
@@ -215,9 +178,32 @@ class DoctrineLoaderTest extends \PHPUnit_Framework_TestCase
         $template->onModify();
         $name = 'foo_bar';
 
-        $this->buildRegistry($name, $template);
-        $loader = new DoctrineLoader($this->registry);
+        $loader = $this->createLoader($name, $template);
 
         $loader->isFresh($name, time());
+    }
+
+    protected function createLoader($name, $template = null)
+    {
+        $repository = $this->getMockBuilder(TemplateRepository::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['findOneBy'])
+            ->getMock();
+        $repository
+            ->expects($this->once())
+            ->method('findOneBy')
+            ->with(['name' => $name])
+            ->will($this->returnValue($template));
+
+        $registry = $this->getMockBuilder(ManagerRegistry::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $registry
+            ->expects($this->once())
+            ->method('getRepository')
+            ->with(TemplateInterface::class)
+            ->will($this->returnValue($repository));
+
+        return new DoctrineLoader($registry);
     }
 }
