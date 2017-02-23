@@ -26,3 +26,7 @@ script:
 notifications:
     email:
         - antalaron@antalaron.hu
+
+cache:
+    directories:
+        - $HOME/.composer/cache
